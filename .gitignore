@@ -23,8 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
-# Backend
+# Backend & ML
 .env
 firebase_key.json
 __pycache__/
 *.pyc
+venv/
+*.pkl
+analysis_output.json
+.gemini/
+.agent/
+brain/
