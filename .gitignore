@@ -1,0 +1,7 @@
+venv/
+__pycache__/
+*.pkl
+analysis_output.json
+.gemini/
+.agent/
+brain/
