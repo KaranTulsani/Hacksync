@@ -1,0 +1,264 @@
+/* Features Page Styles */
+
+.features-page {
+  background-color: #ffffff;
+  color: #111827;
+}
+
+/* Hero Section */
+.features-hero {
+  padding: 10rem 0 6rem;
+  text-align: center;
+  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.05), transparent 50%);
+}
+
+.features-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #7c3aed;
+  margin-bottom: 2rem;
+}
+
+.features-hero h1 {
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.features-hero p {
+  font-size: 1.25rem;
+  color: #6b7280;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* Bento Grid */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 320px);
+  gap: 1.5rem;
+  padding: 4rem 0;
+}
+
+.bento-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 2rem;
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.bento-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  border-color: #d1d5db;
+}
+
+/* Card Sizes */
+.card-large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.card-medium {
+  grid-column: span 2;
+}
+
+.card-small {
+  grid-column: span 1;
+}
+
+/* Card Content */
+.card-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+  background: white;
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  color: #6366f1;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+/* Visual Elements for Cards */
+.card-visual {
+  margin-top: 2rem;
+  position: relative;
+}
+
+/* Strategy Visual */
+.strategy-visual {
+  height: 200px;
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1), transparent 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.node-network {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #6366f1;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+/* Creative Visual */
+.creative-visual {
+  display: flex;
+  gap: 1rem;
+}
+
+.color-swatch {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+/* Comparison Section */
+.comparison-section {
+  padding: 8rem 0;
+  background: #f9fafb;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.comp-card {
+  padding: 3rem;
+  border-radius: 2rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+.comp-card.premium {
+  background: #0a0a0a;
+  color: white;
+  border: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.comp-card.premium::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+}
+
+.comp-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.comp-card.premium .comp-title {
+  color: #ffffff;
+}
+
+.comp-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.comp-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+}
+
+.comp-item.negative {
+  color: #9ca3af;
+}
+
+.comp-item.positive {
+  color: #ffffff;
+}
+
+.check-icon {
+  color: #10b981;
+}
+
+.cross-icon {
+  color: #ef4444;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .card-large,
+  .card-medium,
+  .card-small {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 768px) {
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-hero h1 {
+    font-size: 3rem;
+  }
+}
+
+.cta-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.cta-text {
+  line-height: 1.8;
+}
