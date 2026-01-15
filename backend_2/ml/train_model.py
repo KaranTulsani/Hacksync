@@ -1,5 +1,6 @@
 import pandas as pd
 import joblib
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
@@ -8,8 +9,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
+# Get script directory for relative paths
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 # Load dataset
-data = pd.read_csv("data/campaign_performance_data.csv")
+data = pd.read_csv(os.path.join(script_dir, "..", "data", "campaign_performance_data.csv"))
 
 # Features & target
 X = data.drop(["reach", "engagement"], axis=1)
@@ -58,5 +62,6 @@ print(f"Model trained successfully")
 print(f"Mean Absolute Error: {round(mae, 2)}")
 
 # Save model
-joblib.dump(pipeline, "models/campaign_predictor.pkl")
-print("Model saved to models/campaign_predictor.pkl")
+model_path = os.path.join(script_dir, "models", "campaign_predictor.pkl")
+joblib.dump(pipeline, model_path)
+print(f"Model saved to {model_path}")

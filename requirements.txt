@@ -1,7 +1,17 @@
+# Web Framework
 fastapi
-uvicorn
-openai
+uvicorn[standard]
 pydantic
-firebase-admin
-python-dotenv
+
+# AI & ML
 google-generativeai
+openai
+joblib
+pandas
+scikit-learn
+
+# Database
+firebase-admin
+
+# Utilities
+python-dotenv

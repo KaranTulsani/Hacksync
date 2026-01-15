@@ -1,8 +1,23 @@
 import joblib
 import pandas as pd
+import os
 
-# Load trained model
-model = joblib.load("models/campaign_predictor.pkl")
+# Get script directory for relative paths
+script_dir = os.path.dirname(os.path.abspath(__file__))
+model_path = os.path.join(script_dir, "models", "campaign_predictor.pkl")
+
+# Load trained model (lazy loading)
+model = None
+
+def get_model():
+    global model
+    if model is None:
+        if os.path.exists(model_path):
+            model = joblib.load(model_path)
+        else:
+            raise RuntimeError(f"Model not found at {model_path}. Run train_model.py first.")
+    return model
+
 
 def predict_campaign_performance(input_data: dict):
     """
@@ -17,9 +32,9 @@ def predict_campaign_performance(input_data: dict):
         "influencer": 1
     }
     """
-
+    m = get_model()
     df = pd.DataFrame([input_data])
-    engagement = model.predict(df)[0]
+    engagement = m.predict(df)[0]
 
     if engagement >= 5:
         label = "High"
@@ -29,8 +44,8 @@ def predict_campaign_performance(input_data: dict):
         label = "Low"
 
     return {
-    "predicted_engagement_rate": round(float(engagement), 2),
-    "effectiveness": label
+        "predicted_engagement_rate": round(float(engagement), 2),
+        "effectiveness": label
     }
 
 

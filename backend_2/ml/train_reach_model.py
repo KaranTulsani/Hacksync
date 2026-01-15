@@ -1,5 +1,6 @@
 import pandas as pd
 import joblib
+import os
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
@@ -8,8 +9,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
 
+# Get script directory for relative paths
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
 # Load dataset
-data = pd.read_csv("data/campaign_performance_data.csv")
+data = pd.read_csv(os.path.join(script_dir, "..", "data", "campaign_performance_data.csv"))
 
 X = data.drop(["reach", "engagement"], axis=1)
 y = data["reach"]
@@ -46,5 +50,6 @@ mae = mean_absolute_error(y_test, preds)
 
 print(f"Reach MAE: {int(mae)} impressions")
 
-joblib.dump(pipeline, "models/reach_predictor.pkl")
-print("Reach model saved")
+model_path = os.path.join(script_dir, "models", "reach_predictor.pkl")
+joblib.dump(pipeline, model_path)
+print(f"Reach model saved to {model_path}")

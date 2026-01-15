@@ -1,16 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   FileText, 
   BrainCircuit, 
-  Image as ImageIcon, 
-  Type, 
-  Users, 
-  Calendar, 
   Download,
-  RefreshCw,
   Sparkles,
   CheckCircle,
-  Loader2,
   ArrowRight,
   ArrowLeft,
   Zap,
@@ -19,73 +13,47 @@ import {
   MessageSquare,
   Clock,
   TrendingUp,
-  Layout
+  Layout,
+  Users,
+  Calendar,
+  AlertCircle,
+  Lightbulb,
+  Eye,
+  RefreshCw,
+  Search,
+  DollarSign,
+  Globe,
+  Video,
+  Hash,
+  Briefcase,
+  Settings,
+  Layers,
+  BarChart2
 } from 'lucide-react';
 import Button from '../components/Button';
+import { generateCampaign } from '../services/api';
 import './CreateCampaign.css';
 
 const CreateCampaignPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [completedSteps, setCompletedSteps] = useState([]);
+  const [error, setError] = useState(null);
+  
   const [campaignData, setCampaignData] = useState({
     productName: '',
     description: '',
     targetAudience: '',
     goals: '',
+    tone: 'Professional yet approachable',
     budget: '',
     timeline: '',
     industry: '',
-    platform: '',
-    contentType: ''
+    platform: 'Instagram',
+    contentType: 'Reel'
   });
 
-  // The Backend JSON Output (Merged from both backend teams)
-  const aiOutput = {
-    "strategy": {
-      "campaign_theme": "Hydrate Your Hustle",
-      "emotional_hook": "The feeling of peak performance and effortless energy.",
-      "target_emotion": "Excitement and empowered focus.",
-      "content_angle": "Positioning the smart water bottle as the essential 'smart' gear for academic and social success, ensuring optimal hydration fuels non-stop student life.",
-      "strategy_summary": "This campaign focuses on the high-energy, fast-paced reality of student life. By associating the product with sustained focus and vitality, we appeal directly to their desire to maximize every hour. The visual style will be vibrant and dynamic, mirroring the energy they seek.",
-      "why_it_works": [
-        "Directly addresses the need for sustained energy during long study sessions and extracurriculars.",
-        "Uses 'Hustle' language, resonating with the ambition of the student demographic.",
-        "The 'smart' aspect is framed as a competitive edge, not just a feature."
-      ]
-    },
-    "visual_identity": {
-      "color_palette": ["#00FFFF", "#FF4500", "#1E90FF", "#32CD32"],
-      "mood": "Vibrant, electric, fast-paced, dynamic studio shots mixed with real-life campus action.",
-      "image_prompt": "A diverse group of energetic college students studying late in a brightly lit library, one student confidently takes a sip from a glowing smart water bottle. High contrast, neon accents, sense of motion."
-    },
-    "copywriting": {
-      "captions": [
-        "Ditch the 3 PM crash. Power your all-nighters the smart way. ⚡️ #HydrateYourHustle",
-        "Your brain runs on water. Level up your hydration game and ace that exam. See the glow up. ✨",
-        "More lectures, zero lag. This is the only study partner that keeps up. Tap to secure your focus fuel.",
-        "From campus sprints to late-night coding—stay charged. Get the bottle that matches your ambition."
-      ],
-      "ad_headline": "Stop Sipping. Start Flowing. Fuel Your Student Prime."
-    },
-    "media_plan": {
-      "platforms": ["TikTok", "Instagram Reels", "Snapchat"],
-      "posting_schedule": "High frequency during peak study/stress times (mid-day, late evenings, exam weeks). Utilize short-form video focused on quick, impactful energy demonstrations.",
-      "cta": "Unlock Your Flow: Shop Now & Get 15% Off Your First Semester Upgrade."
-    },
-    "performance_prediction": {
-      "predicted_reach": "9,851",
-      "engagement_rate": "3.16%",
-      "effectiveness": "Medium-High",
-      "recommendations": [
-        "Use Reels on Instagram for 2x higher engagement.",
-        "Post between 7-9 PM for maximum student reach.",
-        "Add a clear Call-To-Action to boost conversion.",
-        "Consider micro-influencer collaboration to increase trust.",
-        "Use slightly longer captions to provide more context."
-      ]
-    }
-  };
+  const [aiOutput, setAiOutput] = useState(null);
 
   const steps = [
     { id: 1, title: 'Brief', icon: <FileText size={20} /> },
@@ -101,471 +69,531 @@ const CreateCampaignPage = () => {
     });
   };
 
-  const startGeneration = () => {
+  const startGeneration = async () => {
     setCompletedSteps([1]);
     setCurrentStep(2);
     setIsGenerating(true);
+    setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    // Simulate AI Strategy Generation
-    setTimeout(() => {
+    try {
+      const result = await generateCampaign({
+        productName: campaignData.productName,
+        targetAudience: campaignData.targetAudience,
+        goal: campaignData.goals,
+        tone: campaignData.tone,
+        budget: campaignData.budget || '$5,000 - $10,000',
+        campaign_duration: campaignData.timeline || '3 Months',
+        platform: campaignData.platform,
+        content_type: campaignData.contentType,
+        industry: campaignData.industry
+      });
+      
+      setAiOutput(result);
       setIsGenerating(false);
-    }, 2500);
+      
+    } catch (err) {
+      console.error('API Error:', err);
+      setError(err.message);
+      setIsGenerating(false);
+    }
   };
 
   const generateCreative = () => {
     setCompletedSteps([1, 2]);
     setCurrentStep(3);
-    setIsGenerating(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // Simulate AI Creative Generation
-    setTimeout(() => {
-      setIsGenerating(false);
-    }, 2500);
   };
 
   const finalReview = () => {
     setCompletedSteps([1, 2, 3]);
     setCurrentStep(4);
-    setIsGenerating(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // Simulate Final Review Generation
-    setTimeout(() => {
-      setIsGenerating(false);
-    }, 1500);
   };
 
   const getProgressWidth = () => {
     return ((currentStep - 1) / (steps.length - 1)) * 100 + '%';
   };
 
+  const formatNumber = (num) => {
+    if (typeof num === 'string') return num;
+    return num?.toLocaleString() || '0';
+  };
+
   return (
     <div className="create-campaign-page">
-      {/* Sticky Stepper Header */}
+      {/* Sticky Stepper */}
       <header className="stepper-header">
-        <div className="container">
-          <div className="stepper-container">
-            <div className="step-progress-line">
-              <div 
-                className="step-progress-fill" 
-                style={{ width: getProgressWidth() }}
-              />
-            </div>
-            
-            {steps.map((step) => (
-              <div 
-                key={step.id} 
-                className={`step-item ${currentStep === step.id ? 'active' : ''} ${completedSteps.includes(step.id) ? 'completed' : ''}`}
-              >
-                <div className="step-icon-wrapper">
-                  {completedSteps.includes(step.id) ? <CheckCircle size={20} /> : step.icon}
-                </div>
-                <span className="step-title">{step.title}</span>
+        <div className="stepper-container">
+          {steps.map((step) => (
+            <div key={step.id} className={`step-item ${currentStep === step.id ? 'active' : ''} ${completedSteps.includes(step.id) ? 'completed' : ''}`}>
+              <div className="step-icon-wrapper">
+                {completedSteps.includes(step.id) ? <CheckCircle size={18} /> : <span>{step.id}</span>}
               </div>
-            ))}
-          </div>
+              <span className="step-title">{step.title}</span>
+            </div>
+          ))}
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <main className="container py-16">
-        <div className="max-w-5xl mx-auto">
-          
+      <main className="campaign-container">
+        
           {isGenerating ? (
             <div className="ai-loading-overlay">
               <div className="loading-pulse">
-                {currentStep === 2 && <BrainCircuit size={40} className="text-accent" />}
-                {currentStep === 3 && <Sparkles size={40} className="text-accent" />}
-                {currentStep === 4 && <CheckCircle size={40} className="text-accent" />}
+                <BrainCircuit size={48} style={{ color: '#6366f1' }} />
               </div>
-              <h2 className="text-2xl font-bold mb-3">
-                {currentStep === 2 && "Orchestrating Strategic Narrative..."}
-                {currentStep === 3 && "Synthesizing Creative Identity..."}
-                {currentStep === 4 && "Finalizing Campaign Package..."}
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#1e293b', marginBottom: '1rem' }}>
+                Crafting Your Campaign...
               </h2>
-              <p className="text-secondary">
-                {currentStep === 2 && "Analyzing market trends and audience psychographics..."}
-                {currentStep === 3 && "Generating color palettes, copy, and visual prompts..."}
-                {currentStep === 4 && "Optimizing media plan and distribution schedule..."}
+              <p style={{ color: '#64748b', fontSize: '1.125rem' }}>
+                Analyzing market trends, generating creative assets, and predicting performance.
               </p>
             </div>
           ) : (
             <>
-              {/* Step 1: Campaign Brief */}
+              {error && (
+                <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '1rem', padding: '1rem 1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem', maxWidth: '1000px', margin: '0 auto 2rem' }}>
+                  <AlertCircle size={20} style={{ color: '#dc2626' }} />
+                  <div>
+                    <p style={{ color: '#dc2626', fontWeight: 600, margin: 0 }}>Connection Issue</p>
+                    <p style={{ color: '#b91c1c', fontSize: '0.875rem', margin: 0 }}>Using demo mode. Start backend: <code style={{ background: '#fee2e2', padding: '0.125rem 0.5rem', borderRadius: '0.25rem' }}>python server.py</code></p>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 1: Brief */}
               {currentStep === 1 && (
-                <div className="campaign-form-card">
-                  <div className="text-center mb-12">
-                    <h1 className="form-section-title">Tell Us About Your Vision</h1>
-                    <p className="form-section-desc">Provide the core details, and our AI will build a complete strategic narrative.</p>
+                <div className="animate-fade-in-up">
+                  <div className="result-section-header">
+                    <h1>Let's Build Your Campaign</h1>
+                    <p>Tell us about your brand. Our AI strategist will handle the rest.</p>
                   </div>
 
-                  <div className="space-y-8">
+                  {/* Section 1: Brand Identity */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <div className="section-icon">
+                        <Zap size={24} />
+                      </div>
+                      <h3 className="form-section-title">Brand Identity</h3>
+                    </div>
+                    
                     <div className="input-group">
-                      <label className="input-label">Product or Brand Name</label>
-                      <input
-                        type="text"
-                        name="productName"
-                        value={campaignData.productName}
-                        onChange={handleInputChange}
-                        placeholder="e.g., EcoBottle - Sustainable Hydration"
-                        className="premium-input"
-                      />
+                      <label className="input-label">Product or Brand Name <span style={{color: '#ef4444'}}>*</span></label>
+                      <div className="input-wrapper">
+                        <Layers size={20} className="input-icon" />
+                        <input 
+                          type="text" 
+                          name="productName" 
+                          value={campaignData.productName} 
+                          onChange={handleInputChange} 
+                          placeholder="e.g., FitPulse Smart Tracker" 
+                          className="premium-input" 
+                        />
+                      </div>
                     </div>
 
                     <div className="input-group">
-                      <label className="input-label">What are you building? (Description)</label>
-                      <textarea
-                        name="description"
-                        value={campaignData.description}
-                        onChange={handleInputChange}
-                        placeholder="Describe your product, its unique features, and why it matters..."
-                        className="premium-input premium-textarea"
-                      />
+                      <label className="input-label">Description & USP</label>
+                      <div className="input-wrapper">
+                        <FileText size={20} className="input-icon" />
+                        <textarea 
+                          name="description" 
+                          value={campaignData.description} 
+                          onChange={handleInputChange} 
+                          placeholder="Describe your product, key features, and what makes it unique..." 
+                          className="premium-input premium-textarea" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Audience & Goals */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <div className="section-icon target">
+                        <Target size={24} />
+                      </div>
+                      <h3 className="form-section-title">Audience & Goals</h3>
                     </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
+                    <div className="settings-grid">
+                      <div className="input-group full-width">
+                        <label className="input-label">Target Audience <span style={{color: '#ef4444'}}>*</span></label>
+                        <div className="input-wrapper">
+                          <Users size={20} className="input-icon" />
+                          <input 
+                            type="text" 
+                            name="targetAudience" 
+                            value={campaignData.targetAudience} 
+                            onChange={handleInputChange} 
+                            placeholder="e.g., Health-conscious millennials, Tech professionals" 
+                            className="premium-input" 
+                          />
+                        </div>
+                      </div>
+
+                      <div className="input-group">
+                        <label className="input-label">Primary Goal</label>
+                        <div className="input-wrapper">
+                          <TrendingUp size={20} className="input-icon" />
+                          <input 
+                            type="text" 
+                            name="goals" 
+                            value={campaignData.goals} 
+                            onChange={handleInputChange} 
+                            placeholder="e.g., Brand Awareness" 
+                            className="premium-input" 
+                          />
+                        </div>
+                      </div>
+
                       <div className="input-group">
                         <label className="input-label">Industry</label>
-                        <input
-                          type="text"
-                          name="industry"
-                          value={campaignData.industry}
-                          onChange={handleInputChange}
-                          placeholder="e.g., Fitness, Tech, Fashion"
-                          className="premium-input"
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label">Primary Platform</label>
-                        <select
-                          name="platform"
-                          value={campaignData.platform}
-                          onChange={handleInputChange}
-                          className="premium-input"
-                        >
-                          <option value="">Select Platform</option>
-                          <option value="Instagram">Instagram</option>
-                          <option value="TikTok">TikTok</option>
-                          <option value="LinkedIn">LinkedIn</option>
-                          <option value="X">X (Twitter)</option>
-                        </select>
+                        <div className="input-wrapper">
+                          <Briefcase size={20} className="input-icon" />
+                          <select name="industry" value={campaignData.industry} onChange={handleInputChange} className="premium-input">
+                            <option value="">Select Industry</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Food & Beverage">Food & Beverage</option>
+                            <option value="Education">Education</option>
+                            <option value="General">General</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="grid md:grid-cols-2 gap-8">
+                  {/* Section 3: Campaign Settings */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <div className="section-icon settings">
+                        <Settings size={24} />
+                      </div>
+                      <h3 className="form-section-title">Campaign Settings</h3>
+                    </div>
+
+                    <div className="settings-grid">
+                      <div className="input-group">
+                        <label className="input-label">Platform</label>
+                        <div className="input-wrapper">
+                          <Globe size={20} className="input-icon" />
+                          <select name="platform" value={campaignData.platform} onChange={handleInputChange} className="premium-input">
+                            <option value="Instagram">Instagram</option>
+                            <option value="TikTok">TikTok</option>
+                            <option value="LinkedIn">LinkedIn</option>
+                            <option value="YouTube">YouTube</option>
+                            <option value="Facebook">Facebook</option>
+                          </select>
+                        </div>
+                      </div>
+
                       <div className="input-group">
                         <label className="input-label">Content Type</label>
-                        <select
-                          name="contentType"
-                          value={campaignData.contentType}
-                          onChange={handleInputChange}
-                          className="premium-input"
-                        >
-                          <option value="">Select Type</option>
-                          <option value="Image">Image</option>
-                          <option value="Video">Video</option>
-                          <option value="Carousel">Carousel</option>
-                        </select>
+                        <div className="input-wrapper">
+                          <Video size={20} className="input-icon" />
+                          <select name="contentType" value={campaignData.contentType} onChange={handleInputChange} className="premium-input">
+                            <option value="Reel">Reel / Short</option>
+                            <option value="Video">Video</option>
+                            <option value="Image">Image</option>
+                            <option value="Carousel">Carousel</option>
+                            <option value="Article">Article</option>
+                          </select>
+                        </div>
                       </div>
+
                       <div className="input-group">
-                        <label className="input-label">Timeline</label>
-                        <input
-                          type="text"
-                          name="timeline"
-                          value={campaignData.timeline}
-                          onChange={handleInputChange}
-                          placeholder="e.g., 3 Months"
-                          className="premium-input"
-                        />
+                        <label className="input-label">Budget Range</label>
+                        <div className="input-wrapper">
+                          <DollarSign size={20} className="input-icon" />
+                          <input 
+                            type="text" 
+                            name="budget" 
+                            value={campaignData.budget} 
+                            onChange={handleInputChange} 
+                            placeholder="e.g., $5,000 - $10,000" 
+                            className="premium-input" 
+                          />
+                        </div>
+                      </div>
+
+                      <div className="input-group">
+                        <label className="input-label">Duration</label>
+                        <div className="input-wrapper">
+                          <Clock size={20} className="input-icon" />
+                          <select name="timeline" value={campaignData.timeline} onChange={handleInputChange} className="premium-input">
+                            <option value="">Select Duration</option>
+                            <option value="1 Month">1 Month</option>
+                            <option value="2 Months">2 Months</option>
+                            <option value="3 Months">3 Months</option>
+                            <option value="6 Months">6 Months</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="mt-12 flex justify-center">
-                    <Button 
-                      variant="primary" 
-                      size="lg"
-                      onClick={startGeneration}
-                      disabled={!campaignData.productName || !campaignData.description}
-                    >
-                      Generate Strategy <Zap size={20} className="ml-2" />
+                  <div className="generate-area">
+                    <Button variant="primary" size="lg" onClick={startGeneration} disabled={!campaignData.productName || !campaignData.targetAudience}>
+                      Generate Campaign Strategy <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />
                     </Button>
                   </div>
                 </div>
               )}
 
-              {/* Step 2: AI Strategy Output */}
-              {currentStep === 2 && (
-                <div className="space-y-8 animate-fade-in-up">
-                  <div className="text-center mb-12">
-                    <h1 className="form-section-title">Strategic Blueprint</h1>
-                    <p className="form-section-desc">Our AI has analyzed your brief and crafted a high-impact market entry strategy.</p>
+              {/* Step 2: Strategy */}
+              {currentStep === 2 && aiOutput && (
+                <div className="animate-fade-in-up">
+                  <div className="result-section-header">
+                    <h1>Strategic Blueprint</h1>
+                    <p>AI-crafted strategy tailored to your brand and audience</p>
                   </div>
 
-                  <div className="grid md:grid-cols-12 gap-6">
-                    <div className="col-span-12 md:col-span-8">
-                      <div className="strategy-card h-full">
-                        <div className="strategy-card-header">
-                          <Target size={20} className="text-accent" />
-                          <span>Core Narrative</span>
-                        </div>
-                        <div className="strategy-card-body">
-                          <div className="insight-pill">Campaign Theme: {aiOutput.strategy.campaign_theme}</div>
-                          <div className="mb-8">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">The Emotional Hook</h3>
-                            <p className="text-xl font-bold text-indigo-900 border-l-4 border-indigo-500 pl-4 italic">
-                              "{aiOutput.strategy.emotional_hook}"
-                            </p>
-                          </div>
-                          <p className="text-slate-600 leading-relaxed mb-8">
-                            {aiOutput.strategy.strategy_summary}
-                          </p>
-                          <div className="space-y-3">
-                            {aiOutput.strategy.why_it_works.map((point, i) => (
-                              <div key={i} className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <CheckCircle size={18} className="text-emerald-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-sm text-slate-700 font-medium">{point}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
+                  {/* Main Strategy Card */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <div className="section-icon">
+                        <Target size={24} />
                       </div>
+                      <h3 className="form-section-title">Core Strategy</h3>
                     </div>
+                    
+                    <div className="theme-badge">
+                      <Lightbulb size={14} />
+                      {aiOutput.strategy?.campaign_theme}
+                    </div>
+                    
+                    <div className="emotional-hook">
+                      "{aiOutput.strategy?.emotional_hook}"
+                    </div>
+                    
+                    <p className="strategy-summary">
+                      {aiOutput.strategy?.strategy_summary}
+                    </p>
 
-                    <div className="col-span-12 md:col-span-4 space-y-6">
-                      <div className="strategy-card">
-                        <div className="strategy-card-header">
-                          <Zap size={20} className="text-accent" />
-                          <span>Target Emotion</span>
+                    <div className="why-it-works">
+                      {aiOutput.strategy?.why_it_works?.slice(0, 4).map((point, i) => (
+                        <div key={i} className="why-item">
+                          <CheckCircle size={18} />
+                          <span>{point}</span>
                         </div>
-                        <div className="strategy-card-body">
-                          <div className="text-2xl font-black text-indigo-600">{aiOutput.strategy.target_emotion}</div>
-                        </div>
-                      </div>
-                      <div className="strategy-card">
-                        <div className="strategy-card-header">
-                          <Layout size={20} className="text-accent" />
-                          <span>Content Angle</span>
-                        </div>
-                        <div className="strategy-card-body">
-                          <p className="text-sm text-slate-600 leading-relaxed font-medium">
-                            {aiOutput.strategy.content_angle}
-                          </p>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="flex justify-between mt-12">
+                  {/* Side Cards Grid */}
+                  <div className="settings-grid">
+                    <div className="side-card">
+                      <div className="side-card-header">
+                        <Zap size={18} /> Target Emotion
+                      </div>
+                      <div className="side-card-value large">
+                        {aiOutput.strategy?.target_emotion}
+                      </div>
+                    </div>
+
+                    <div className="side-card">
+                      <div className="side-card-header">
+                        <Eye size={18} /> Content Angle
+                      </div>
+                      <div className="side-card-value">
+                        {aiOutput.strategy?.content_angle}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="generate-area" style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Button variant="secondary" onClick={() => setCurrentStep(1)}>
-                      <ArrowLeft size={20} className="mr-2" /> Back to Brief
+                      <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Edit Brief
                     </Button>
                     <Button variant="primary" onClick={generateCreative}>
-                      Generate Creative Assets <Sparkles size={20} className="ml-2" />
+                      View Creative Assets <Sparkles size={18} style={{ marginLeft: '0.5rem' }} />
                     </Button>
                   </div>
                 </div>
               )}
 
-              {/* Step 3: Creative Output */}
-              {currentStep === 3 && (
-                <div className="space-y-8 animate-fade-in-up">
-                  <div className="text-center mb-12">
-                    <h1 className="form-section-title">Creative Execution</h1>
-                    <p className="form-section-desc">Visuals, copy, and channel strategies optimized for your core narrative.</p>
+              {/* Step 3: Creative */}
+              {currentStep === 3 && aiOutput && (
+                <div className="animate-fade-in-up">
+                  <div className="result-section-header">
+                    <h1>Creative Assets</h1>
+                    <p>Visual identity, copy, and content optimized for {campaignData.platform}</p>
                   </div>
 
-                  <div className="grid md:grid-cols-12 gap-8">
-                    {/* Visual Identity */}
-                    <div className="col-span-12 md:col-span-7">
-                      <div className="strategy-card h-full">
-                        <div className="strategy-card-header">
-                          <Palette size={20} className="text-accent" />
-                          <span>Visual Identity</span>
-                        </div>
-                        <div className="strategy-card-body">
-                          <div className="mb-8">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Color Palette</h3>
-                            <div className="flex gap-4 flex-wrap">
-                              {aiOutput.visual_identity.color_palette.map((color, i) => (
-                                <div key={i} className="flex flex-col items-center gap-2">
-                                  <div className="w-12 h-12 rounded-xl shadow-sm border border-slate-100" style={{ background: color }} />
-                                  <span className="text-[10px] font-mono font-bold text-slate-400">{color}</span>
-                                </div>
-                              ))}
-                            </div>
+                  {/* Visual Identity */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <div className="section-icon creative">
+                        <Palette size={24} />
+                      </div>
+                      <h3 className="form-section-title">Visual Identity</h3>
+                    </div>
+
+                    <div style={{ marginBottom: '2.5rem' }}>
+                      <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1.5rem' }}>Color Palette</p>
+                      <div className="color-palette">
+                        {aiOutput.visual_identity?.color_palette?.map((color, i) => (
+                          <div key={i} className="color-swatch">
+                            <div className="swatch" style={{ background: color }} />
+                            <span className="color-code">{color}</span>
                           </div>
-                          
-                          <div className="bg-slate-900 rounded-2xl p-6 text-white relative overflow-hidden">
-                            <h3 className="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-3">AI Image Prompt</h3>
-                            <p className="text-sm font-medium leading-relaxed italic opacity-90">
-                              "{aiOutput.visual_identity.image_prompt}"
-                            </p>
-                          </div>
-                          
-                          <div className="mt-6">
-                            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Mood & Aesthetic</h3>
-                            <p className="text-sm text-slate-700 font-medium">{aiOutput.visual_identity.mood}</p>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
 
-                    {/* Copywriting */}
-                    <div className="col-span-12 md:col-span-5">
-                      <div className="strategy-card h-full">
-                        <div className="strategy-card-header">
-                          <MessageSquare size={20} className="text-accent" />
-                          <span>Ad Copy Samples</span>
-                        </div>
-                        <div className="strategy-card-body space-y-4">
-                          <div className="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                            <div className="text-[10px] font-bold text-indigo-600 mb-1 uppercase">Headline</div>
-                            <p className="text-sm font-black text-slate-900">"{aiOutput.copywriting.ad_headline}"</p>
-                          </div>
-                          {aiOutput.copywriting.captions.slice(0, 3).map((caption, i) => (
-                            <div key={i} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                              <div className="text-[10px] font-bold text-slate-400 mb-1 uppercase">Social Caption {i+1}</div>
-                              <p className="text-xs text-slate-600 italic">"{caption}"</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                    <div className="image-prompt-box">
+                      <p className="prompt-text">"{aiOutput.visual_identity?.image_prompt}"</p>
                     </div>
                   </div>
 
-                  <div className="flex justify-between mt-12">
-                    <Button variant="secondary" onClick={() => setCurrentStep(2)}>
-                      <ArrowLeft size={20} className="mr-2" /> Back to Strategy
-                    </Button>
-                    <Button variant="primary" onClick={finalReview}>
-                      Review & Export <CheckCircle size={20} className="ml-2" />
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              {/* Step 4: Review & Performance Prediction */}
-              {currentStep === 4 && (
-                <div className="space-y-8 animate-fade-in-up">
-                  <div className="campaign-form-card">
-                    <div className="text-center mb-12">
-                      <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-6">
-                        <CheckCircle size={40} className="text-emerald-600" />
+                  {/* Copywriting */}
+                  <div className="form-section">
+                    <div className="form-section-header">
+                      <div className="section-icon target">
+                        <MessageSquare size={24} />
                       </div>
-                      <h1 className="form-section-title">Campaign Fully Orchestrated</h1>
-                      <p className="form-section-desc">Your complete brand package is ready. We've also run a performance simulation.</p>
+                      <h3 className="form-section-title">Ad Copy</h3>
                     </div>
 
-                    {/* Performance Predictor Dashboard (ML Backend Integration) */}
-                    <div className="bg-slate-900 rounded-3xl p-8 mb-12 text-white relative overflow-hidden">
-                      <div className="absolute top-0 right-0 p-6 opacity-10">
-                        <TrendingUp size={120} />
+                    <div className="copy-grid">
+                      <div className="caption-card headline">
+                        <div className="caption-label">Headline</div>
+                        <div className="caption-text">{aiOutput.copywriting?.ad_headline}</div>
                       </div>
                       
-                      <div className="relative z-10">
-                        <div className="flex items-center gap-2 text-indigo-400 font-bold text-xs uppercase tracking-widest mb-8">
-                          <BrainCircuit size={16} /> Performance Prediction Engine
+                      {aiOutput.copywriting?.captions?.slice(0, 3).map((caption, i) => (
+                        <div key={i} className="caption-card">
+                          <div className="caption-label">Caption {i + 1}</div>
+                          <div className="caption-text">"{caption}"</div>
                         </div>
+                      ))}
+                    </div>
+                  </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                            <div className="text-slate-400 text-xs font-bold uppercase mb-2">Predicted Reach</div>
-                            <div className="text-3xl font-black text-white">{aiOutput.performance_prediction.predicted_reach}</div>
-                            <div className="text-[10px] text-emerald-400 font-bold mt-1">+12% vs Industry Avg</div>
-                          </div>
-                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                            <div className="text-slate-400 text-xs font-bold uppercase mb-2">Engagement Rate</div>
-                            <div className="text-3xl font-black text-white">{aiOutput.performance_prediction.engagement_rate}</div>
-                            <div className="text-[10px] text-indigo-400 font-bold mt-1">High Potential</div>
-                          </div>
-                          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                            <div className="text-slate-400 text-xs font-bold uppercase mb-2">Effectiveness</div>
-                            <div className="text-3xl font-black text-indigo-400">{aiOutput.performance_prediction.effectiveness}</div>
-                            <div className="text-[10px] text-slate-500 font-bold mt-1">Based on ML Model v1.8</div>
-                          </div>
-                        </div>
+                  <div className="generate-area" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Button variant="secondary" onClick={() => setCurrentStep(2)}>
+                      <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Back to Strategy
+                    </Button>
+                    <Button variant="primary" onClick={finalReview}>
+                      Review & Export <CheckCircle size={18} style={{ marginLeft: '0.5rem' }} />
+                    </Button>
+                  </div>
+                </div>
+              )}
 
-                        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-6">
-                          <h3 className="text-xs font-bold text-indigo-300 uppercase tracking-widest mb-4">ML Optimization Recommendations</h3>
-                          <div className="grid md:grid-cols-2 gap-4">
-                            {aiOutput.performance_prediction.recommendations.map((rec, i) => (
-                              <div key={i} className="flex items-start gap-3 text-sm text-slate-300">
-                                <Zap size={14} className="text-indigo-400 mt-1 flex-shrink-0" />
-                                <span>{rec}</span>
-                              </div>
-                            ))}
-                          </div>
+              {/* Step 4: Review */}
+              {currentStep === 4 && aiOutput && (
+                <div className="animate-fade-in-up">
+                  <div className="result-section-header">
+                    <h1>Campaign Ready!</h1>
+                    <p>Your AI-powered campaign package is complete</p>
+                  </div>
+
+                  {/* Performance Dashboard */}
+                  <div className="performance-dashboard">
+                    <div className="dashboard-header">
+                      <BarChart2 size={28} style={{ color: '#6366f1' }} />
+                      <h3>Performance Prediction Engine</h3>
+                    </div>
+
+                    <div className="metrics-row">
+                      <div className="metric-box">
+                        <div className="metric-label">Predicted Reach</div>
+                        <div className="metric-value">{formatNumber(aiOutput.performance_prediction?.predicted_reach)}</div>
+                        <div className="metric-sub">+12% vs Industry</div>
+                      </div>
+                      <div className="metric-box">
+                        <div className="metric-label">Engagement Rate</div>
+                        <div className="metric-value">{aiOutput.performance_prediction?.engagement_rate}</div>
+                        <div className="metric-sub" style={{ color: '#818cf8' }}>
+                          vs {aiOutput.performance_prediction?.industry_average || '3.5%'} Avg
                         </div>
+                      </div>
+                      <div className="metric-box">
+                        <div className="metric-label">Effectiveness</div>
+                        <div className="metric-value" style={{ color: '#10b981' }}>{aiOutput.performance_prediction?.effectiveness}</div>
+                        <div className="metric-sub" style={{ color: '#94a3b8' }}>ML Analysis</div>
                       </div>
                     </div>
 
-                    <div className="grid md:grid-cols-12 gap-8 mb-12">
-                      <div className="col-span-12 md:col-span-7">
-                        <div className="bg-slate-50 rounded-2xl p-8 border border-slate-100 h-full">
-                          <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                            <Layout size={18} className="text-accent" /> Media Plan Summary
-                          </h3>
-                          <div className="mb-6">
-                            <div className="text-xs font-bold text-slate-500 mb-2 uppercase">Primary Platforms</div>
-                            <div className="flex gap-2">
-                              {aiOutput.media_plan.platforms.map((p, i) => (
-                                <span key={i} className="px-3 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-700">{p}</span>
-                              ))}
+                    <div className="recommendations-box">
+                      <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#a5b4fc', textTransform: 'uppercase', marginBottom: '1.5rem' }}>Optimization Recommendations</h4>
+                      <div className="rec-grid">
+                        {aiOutput.performance_prediction?.recommendations?.slice(0, 4).map((rec, i) => (
+                          <div key={i} className="rec-item">
+                            <Zap size={16} style={{ color: '#818cf8', flexShrink: 0, marginTop: '2px' }} />
+                            <span>{rec}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Timeline */}
+                  {aiOutput.campaign_timeline && (
+                    <div className="form-section">
+                      <div className="form-section-header">
+                        <div className="section-icon timeline">
+                          <Calendar size={24} />
+                        </div>
+                        <h3 className="form-section-title">Campaign Timeline</h3>
+                      </div>
+                      
+                      <div className="timeline-container">
+                        {aiOutput.campaign_timeline.phases?.map((phase, i) => (
+                          <div key={i} className="timeline-phase">
+                            <div className="phase-dot" />
+                            <div className="phase-content">
+                              <div className="phase-header">
+                                <span className="phase-title">{phase.phase_name}</span>
+                                <span className="phase-duration">{phase.duration}</span>
+                              </div>
+                              <p style={{ fontSize: '0.9375rem', color: '#334155', marginBottom: '1rem', fontWeight: 500 }}>{phase.objective}</p>
+                              <div className="phase-activities">
+                                {phase.key_activities?.slice(0, 4).map((activity, j) => (
+                                  <div key={j} className="activity">{activity}</div>
+                                ))}
+                              </div>
                             </div>
                           </div>
-                          <div className="mb-6">
-                            <div className="text-xs font-bold text-slate-500 mb-2 uppercase flex items-center gap-1"><Clock size={12} /> Posting Schedule</div>
-                            <p className="text-sm text-slate-600 leading-relaxed">{aiOutput.media_plan.posting_schedule}</p>
-                          </div>
-                          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-                            <div className="text-[10px] font-bold text-emerald-600 mb-1 uppercase">Primary CTA</div>
-                            <p className="text-sm font-black text-emerald-900">"{aiOutput.media_plan.cta}"</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="col-span-12 md:col-span-5">
-                        <div className="grid grid-cols-2 gap-4 h-full">
-                          <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-center items-center text-center">
-                            <div className="text-3xl font-black text-indigo-600 mb-1">12</div>
-                            <div className="text-[10px] font-bold text-slate-400 uppercase">Visuals</div>
-                          </div>
-                          <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-center items-center text-center">
-                            <div className="text-3xl font-black text-indigo-600 mb-1">24</div>
-                            <div className="text-[10px] font-bold text-slate-400 uppercase">Copy Sets</div>
-                          </div>
-                          <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-center items-center text-center">
-                            <div className="text-3xl font-black text-indigo-600 mb-1">8</div>
-                            <div className="text-[10px] font-bold text-slate-400 uppercase">Influencers</div>
-                          </div>
-                          <div className="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col justify-center items-center text-center">
-                            <div className="text-3xl font-black text-indigo-600 mb-1">1</div>
-                            <div className="text-[10px] font-bold text-slate-400 uppercase">Media Plan</div>
-                          </div>
-                        </div>
+                        ))}
                       </div>
                     </div>
+                  )}
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button variant="primary" size="lg">
-                        <Download size={20} className="mr-2" /> Export Campaign Package
-                      </Button>
-                      <Button variant="secondary" size="lg" onClick={() => {
-                        setCompletedSteps([]);
-                        setCurrentStep(1);
-                      }}>
-                        Start New Campaign
-                      </Button>
-                    </div>
+                  <div className="generate-area" style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+                    <Button variant="primary" size="lg" onClick={() => {
+                      const dataStr = JSON.stringify(aiOutput, null, 2);
+                      const blob = new Blob([dataStr], { type: 'application/json' });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `campaign-${campaignData.productName?.replace(/\s+/g, '-') || 'export'}.json`;
+                      a.click();
+                    }}>
+                      <Download size={20} style={{ marginRight: '0.5rem' }} /> Export Campaign
+                    </Button>
+                    <Button variant="secondary" size="lg" onClick={() => {
+                      setCompletedSteps([]);
+                      setCurrentStep(1);
+                      setAiOutput(null);
+                      setCampaignData({
+                        productName: '', description: '', targetAudience: '', goals: '',
+                        tone: 'Professional yet approachable', budget: '', timeline: '',
+                        industry: '', platform: 'Instagram', contentType: 'Reel'
+                      });
+                    }}>
+                      <RefreshCw size={20} style={{ marginRight: '0.5rem' }} /> New Campaign
+                    </Button>
                   </div>
                 </div>
               )}
             </>
           )}
-        </div>
       </main>
     </div>
   );
