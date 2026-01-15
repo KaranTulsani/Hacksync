@@ -321,6 +321,20 @@ const CreateCampaignPage = () => {
                       </div>
 
                       <div className="input-group">
+                        <label className="input-label">Start Date</label>
+                        <div className="input-wrapper">
+                          <Calendar size={20} className="input-icon" />
+                          <input 
+                            type="date" 
+                            name="startDate" 
+                            value={campaignData.startDate} 
+                            onChange={handleInputChange} 
+                            className="premium-input" 
+                          />
+                        </div>
+                      </div>
+
+                      <div className="input-group">
                         <label className="input-label">Duration</label>
                         <div className="input-wrapper">
                           <Clock size={20} className="input-icon" />
@@ -500,7 +514,7 @@ const CreateCampaignPage = () => {
                       <h3>Performance Prediction Engine</h3>
                     </div>
 
-                    <div className="metrics-row">
+                    <div className="metrics-row" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
                       <div className="metric-box">
                         <div className="metric-label">Predicted Reach</div>
                         <div className="metric-value">{formatNumber(aiOutput.performance_prediction?.predicted_reach)}</div>
@@ -520,7 +534,7 @@ const CreateCampaignPage = () => {
                       </div>
                     </div>
 
-                    <div className="recommendations-box">
+                    <div className="recommendations-box" style={{ marginBottom: '2rem' }}>
                       <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: '#a5b4fc', textTransform: 'uppercase', marginBottom: '1.5rem' }}>Optimization Recommendations</h4>
                       <div className="rec-grid">
                         {aiOutput.performance_prediction?.recommendations?.slice(0, 4).map((rec, i) => (
@@ -531,16 +545,91 @@ const CreateCampaignPage = () => {
                         ))}
                       </div>
                     </div>
+
+                    {/* Best Posting Time Section */}
+                    <div className="posting-time-section" style={{ 
+                      background: 'rgba(255, 255, 255, 0.03)', 
+                      borderRadius: '1.5rem', 
+                      padding: '2rem',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                        <div style={{ 
+                          width: '3.5rem', 
+                          height: '3.5rem', 
+                          borderRadius: '50%', 
+                          background: 'rgba(245, 158, 11, 0.1)', 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          justifyContent: 'center',
+                          color: '#f59e0b'
+                        }}>
+                          <Clock size={24} />
+                        </div>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'white' }}>Optimal Posting Schedule</h4>
+                          <p style={{ margin: '0.25rem 0 0', color: '#94a3b8', fontSize: '0.9375rem' }}>Based on {campaignData.platform} peak activity hours</p>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#f59e0b', marginBottom: '0.25rem' }}>
+                          {aiOutput.performance_prediction?.best_posting_time || '6PM - 9PM'}
+                        </div>
+                        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                          Recommended Window
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Timeline */}
                   {aiOutput.campaign_timeline && (
                     <div className="form-section">
-                      <div className="form-section-header">
-                        <div className="section-icon timeline">
-                          <Calendar size={24} />
+                      <div className="form-section-header" style={{ justifyContent: 'space-between' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                          <div className="section-icon timeline">
+                            <Calendar size={24} />
+                          </div>
+                          <h3 className="form-section-title">Campaign Timeline</h3>
                         </div>
-                        <h3 className="form-section-title">Campaign Timeline</h3>
+                        <Button variant="secondary" size="sm" onClick={() => {
+                          // Open Google Calendar with all phases
+                          const phases = aiOutput.campaign_timeline.phases || [];
+                          let currentDate = campaignData.startDate ? new Date(campaignData.startDate) : new Date();
+                          
+                          // Format date for Google Calendar URL (YYYYMMDD)
+                          const formatGoogleDate = (date) => {
+                            return date.toISOString().split('T')[0].replace(/-/g, '');
+                          };
+                          
+                          // Open each phase as a separate Google Calendar event
+                          phases.forEach((phase, index) => {
+                            const startDate = new Date(currentDate);
+                            const durationWeeks = 2; // Each phase is ~2 weeks
+                            const endDate = new Date(startDate);
+                            endDate.setDate(startDate.getDate() + (durationWeeks * 7));
+                            
+                            const title = encodeURIComponent(`📈 BrandPulse: ${phase.phase_name}`);
+                            const details = encodeURIComponent(
+                              `${phase.objective}\n\n📋 Key Activities:\n• ${phase.key_activities?.join('\n• ') || 'TBD'}\n\n🚀 Generated by BrandPulse AI`
+                            );
+                            const dates = `${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}`;
+                            
+                            const googleCalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}`;
+                            
+                            // Open first phase immediately, others after a small delay
+                            setTimeout(() => {
+                              window.open(googleCalUrl, '_blank');
+                            }, index * 500);
+                            
+                            currentDate = endDate;
+                          });
+                        }}>
+                          <Calendar size={16} style={{ marginRight: '0.5rem' }} /> Add to Calendar
+                        </Button>
                       </div>
                       
                       <div className="timeline-container">
