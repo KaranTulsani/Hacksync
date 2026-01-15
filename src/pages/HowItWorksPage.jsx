@@ -49,7 +49,7 @@ const HowItWorksPage = () => {
     },
     {
       title: 'Autonomous Reasoning',
-      description: 'The BrandPulse brain orchestrates a complex strategy, analyzing competitors and defining your unique voice.',
+      description: 'The StratOS brain orchestrates a complex strategy, analyzing competitors and defining your unique voice.',
       icon: <BrainCircuit size={32} />,
       color: 'purple',
       details: [
@@ -219,7 +219,7 @@ const HowItWorksPage = () => {
           <div className="cta-box">
             <div className="cta-glow"></div>
             <h2>Start your autonomous journey</h2>
-            <p>Join the next generation of brand builders using BrandPulse.</p>
+            <p>Join the next generation of brand builders using StratOS.</p>
             <div className="cta-actions">
               <Button variant="accent" onClick={() => window.location.href='/create-campaign'}>
                 Create Campaign <ArrowRight size={18} className="ml-2" />

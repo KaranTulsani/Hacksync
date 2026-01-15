@@ -60,7 +60,7 @@ const DemoPage = () => {
           </div>
           <h1>Experience the<br />Autonomous Workspace</h1>
           <p>
-            Step into the BrandPulse canvas and see how our AI orchestrates 
+            Step into the StratOS canvas and see how our AI orchestrates 
             every detail of your brand's next big move.
           </p>
           <div className="flex justify-center">

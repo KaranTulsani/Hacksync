@@ -174,13 +174,13 @@ def generate_smart_campaign(
             "emotional_hook": hook,
             "target_emotion": f"{emotion} — the feeling of knowing you made the right choice.",
             "content_angle": f"Position {product} as the essential tool for {audience} who refuse to settle. Every piece of content should reinforce that choosing {product} is choosing a better version of themselves.",
-            "strategy_summary": f"This campaign leverages the core desire for {emotion.lower()} among {audience}. With a budget of {budget} over {duration}, we'll execute a phased approach: building awareness through {platform} {content_type.lower()}s, driving engagement through authentic storytelling, and converting through social proof and targeted retargeting. The {theme} theme creates a cohesive narrative that resonates deeply with the target psychographics.",
+            "strategy_summary": f"This campaign leverages the core desire for {emotion.lower()} among {audience}. With a budget of {budget} over {duration}, we'll execute a phased approach: building awareness through {platform} {content_type.lower()}s, driving engagement through authentic storytelling, and converting through social proof and targeted retargeting. The {theme} theme creates a cohesive narrative that resonates deeply with the target psychographics on {platform}.",
             "why_it_works": [
                 f"Directly addresses {audience}'s core desire for {emotion.lower()}.",
                 f"Leverages {platform}'s algorithm strengths with {content_type.lower()} content.",
-                f"Creates an emotional moat that competitors can't easily replicate.",
+                f"Creates an emotional moat that competitors can't easily replicate on {platform}.",
                 f"Builds community-driven momentum through user-generated content.",
-                f"Strategic budget allocation maximizes ROI across the {duration} timeline."
+                f"Strategic budget allocation ({budget}) maximizes ROI across the {duration} timeline."
             ]
         },
         "visual_identity": {
@@ -198,7 +198,7 @@ def generate_smart_campaign(
             ]
         },
         "media_plan": {
-            "platforms": [platform] + [p for p in ["Instagram", "TikTok", "YouTube"] if p != platform][:2],
+            "platforms": [platform] + ([p for p in ["Instagram", "TikTok", "Facebook"] if p != platform][:1] if platform != "LinkedIn" else ["Twitter"]),
             "posting_schedule": f"Primary platform ({platform}): {plat_data['best_times']}. {plat_data['content_focus']}. Recommended frequency: 5-7 posts per week during launch, scaling to 3-4 during growth phase.",
             "cta": f"Ready to experience the difference? {plat_data['cta_styles'][0]} and discover why {audience} are making the switch to {product}.",
             "channel_strategy": {

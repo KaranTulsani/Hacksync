@@ -25,7 +25,7 @@ export const CTA = () => {
       <div className="container max-w-3xl">
         <h2 className="text-4xl mb-6">Ready to launch your next campaign?</h2>
         <p className="text-lg text-secondary mb-10">
-          Stop spending weeks on strategy and creative. Let BrandPulse do the heavy lifting in minutes.
+          Stop spending weeks on strategy and creative. Let StratOS do the heavy lifting in minutes.
         </p>
         <Button variant="primary" style={{ padding: '1rem 2.5rem', fontSize: '1.1rem' }}>Start Free Trial</Button>
         <p className="mt-4 text-sm text-secondary">No credit card required.</p>

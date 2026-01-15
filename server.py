@@ -17,6 +17,20 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend_2', 'ml'))
 # Import smart demo generator
 from smart_demo_generator import generate_smart_campaign
 
+# Import competitor analyzer
+from competitor_analyzer import (
+    get_competitors_by_industry,
+    analyze_competitor,
+    get_industry_overview
+)
+
+# Import AI Coach
+from ai_coach import explain_campaign_decision
+
+# Import Budget Optimizer
+from budget_optimizer import optimize_budget
+
+
 # Import with graceful error handling
 GEMINI_AVAILABLE = False
 
@@ -97,6 +111,30 @@ class PerformancePredictionRequest(BaseModel):
     caption_length: int = 120
     cta: int = 1
     influencer: int = 0
+
+
+class CompetitorAnalysisRequest(BaseModel):
+    industry: str
+    competitor_name: Optional[str] = None
+    user_campaign: Optional[dict] = None
+
+
+class ExplainDecisionRequest(BaseModel):
+    element_type: str
+    element_value: str
+    product: Optional[str] = "your product"
+    audience: Optional[str] = "your audience"
+    platform: Optional[str] = "Instagram"
+    context: Optional[dict] = None
+
+
+class BudgetOptimizerRequest(BaseModel):
+    budget: str
+    industry: Optional[str] = "General"
+    platform: Optional[str] = "Instagram"
+    goal: Optional[str] = "awareness"
+    campaign_duration: Optional[str] = "3 months"
+    has_influencer: Optional[bool] = True
 
 
 # ============ SMART DEMO PREDICTION ============
@@ -258,19 +296,30 @@ def generate_full_campaign(request: UnifiedCampaignRequest):
     """
     try:
         # Step 1: Generate Campaign Strategy
+        campaign_result = None
+        
         if GEMINI_AVAILABLE:
-            # Use real Gemini API
-            campaign_input = {
-                "product": request.product,
-                "audience": request.audience,
-                "goal": request.goal,
-                "tone": request.tone,
-                "budget": request.budget,
-                "campaign_duration": request.campaign_duration
-            }
-            campaign_result = run_brandpulse(campaign_input)
-        else:
-            # Use SMART demo generator
+            # Try to use real Gemini API
+            try:
+                campaign_input = {
+                    "product": request.product,
+                    "audience": request.audience,
+                    "goal": request.goal,
+                    "tone": request.tone,
+                    "budget": request.budget,
+                    "campaign_duration": request.campaign_duration,
+                    "platform": request.platform,
+                    "content_type": request.content_type
+                }
+                campaign_result = run_brandpulse(campaign_input)
+                print("✓ Used Gemini API successfully")
+            except Exception as gemini_error:
+                print(f"⚠️  Gemini API failed: {gemini_error}")
+                print("🧠 Falling back to Smart Demo Generator")
+                campaign_result = None
+        
+        # Use SMART demo generator if Gemini failed or unavailable
+        if campaign_result is None:
             campaign_result = generate_smart_campaign(
                 product=request.product,
                 audience=request.audience,
@@ -377,6 +426,87 @@ def predict_performance_only(request: PerformancePredictionRequest):
             "recommendations": recommendations
         }
         
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/get-competitors")
+def get_competitors(request: CompetitorAnalysisRequest):
+    """
+    Get competitor profiles for a specific industry
+    """
+    try:
+        competitors = get_competitors_by_industry(request.industry, limit=3)
+        return {
+            "industry": request.industry,
+            "competitors": competitors,
+            "count": len(competitors)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/analyze-competitor")
+def analyze_specific_competitor(request: CompetitorAnalysisRequest):
+    """
+    Analyze a specific competitor and generate differentiation strategy
+    """
+    if not request.competitor_name or not request.user_campaign:
+        raise HTTPException(status_code=400, detail="competitor_name and user_campaign are required")
+    
+    try:
+        analysis = analyze_competitor(request.competitor_name, request.user_campaign)
+        return analysis
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/industry-overview")
+def get_industry_competitive_overview(request: CompetitorAnalysisRequest):
+    """
+    Get competitive landscape overview for an industry
+    """
+    try:
+        overview = get_industry_overview(request.industry)
+        return overview
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/explain-decision")
+def explain_decision(request: ExplainDecisionRequest):
+    """
+    AI Campaign Coach - Explain why a decision was made
+    """
+    try:
+        explanation = explain_campaign_decision({
+            "element_type": request.element_type,
+            "element_value": request.element_value,
+            "product": request.product,
+            "audience": request.audience,
+            "platform": request.platform,
+            "context": request.context
+        })
+        return explanation
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/optimize-budget")
+def get_optimized_budget(request: BudgetOptimizerRequest):
+    """
+    Budget Optimizer - Get intelligent budget allocation and ROI projection
+    """
+    try:
+        result = optimize_budget(
+            budget=request.budget,
+            industry=request.industry,
+            platform=request.platform,
+            goal=request.goal,
+            campaign_duration=request.campaign_duration,
+            has_influencer=request.has_influencer
+        )
+        return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Cloud } from 'lucide-react';
 import Button from './Button';
 
 const Navbar = () => {
@@ -14,8 +15,8 @@ const Navbar = () => {
       <div className="container flex items-center justify-between">
         <div className="logo">
           <Link to="/" className="flex items-center gap-sm">
-            <div style={{ width: '24px', height: '24px', background: 'var(--color-text-primary)', borderRadius: '6px' }}></div>
-            <span style={{ fontWeight: 700, fontSize: '1.25rem', letterSpacing: '-0.02em' }}>BrandPulse</span>
+            <Cloud size={28} color="var(--color-text-primary)" fill="var(--color-text-primary)" style={{ opacity: 0.9 }} />
+            <span style={{ fontWeight: 800, fontSize: '1.5rem', letterSpacing: '-0.03em', color: 'var(--color-text-primary)' }}>StratOS</span>
           </Link>
         </div>
         
@@ -44,7 +45,6 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-sm">
-          <Button variant="ghost" className="hidden sm:inline-flex">Log In</Button>
           <Link to="/create-campaign">
             <Button variant="primary">Create Campaign</Button>
           </Link>

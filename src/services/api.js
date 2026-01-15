@@ -1,5 +1,5 @@
 /**
- * BrandPulse API Service
+ * StratOS API Service
  * Handles all communication with the backend APIs
  */
 
@@ -87,8 +87,152 @@ export async function checkHealth() {
   }
 }
 
+/**
+ * Get competitor profiles for a specific industry
+ * @param {string} industry - Industry name
+ * @returns {Promise<Object>} - List of competitors
+ */
+export async function getCompetitors(industry) {
+  const response = await fetch(`${API_BASE_URL}/api/get-competitors`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ industry }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to get competitors');
+  }
+
+  return response.json();
+}
+
+/**
+ * Analyze a specific competitor and get differentiation strategy
+ * @param {string} competitorName - Name of the competitor
+ * @param {Object} userCampaign - User's campaign data
+ * @param {string} industry - Industry name
+ * @returns {Promise<Object>} - Competitor analysis and differentiation insights
+ */
+export async function analyzeCompetitor(competitorName, userCampaign, industry = 'General') {
+  const response = await fetch(`${API_BASE_URL}/api/analyze-competitor`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      industry: industry,
+      competitor_name: competitorName,
+      user_campaign: userCampaign,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to analyze competitor');
+  }
+
+  return response.json();
+}
+
+/**
+ * Get competitive landscape overview for an industry
+ * @param {string} industry - Industry name
+ * @returns {Promise<Object>} - Industry competitive overview
+ */
+export async function getIndustryOverview(industry) {
+  const response = await fetch(`${API_BASE_URL}/api/industry-overview`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ industry }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to get industry overview');
+  }
+
+  return response.json();
+}
+
+/**
+ * AI Campaign Coach - Explain why a decision was made
+ * @param {string} elementType - Type of element (campaign_theme, color_palette, etc.)
+ * @param {string} elementValue - The actual value/decision
+ * @param {string} product - Product name
+ * @param {string} audience - Target audience
+ * @param {string} platform - Platform name
+ * @returns {Promise<Object>} - Explanation with insights and pro tips
+ */
+export async function explainDecision(elementType, elementValue, product, audience, platform) {
+  const response = await fetch(`${API_BASE_URL}/api/explain-decision`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      element_type: elementType,
+      element_value: elementValue,
+      product: product || 'your product',
+      audience: audience || 'your audience',
+      platform: platform || 'Instagram',
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to get explanation');
+  }
+
+  return response.json();
+}
+
+/**
+ * Budget Optimizer - Get intelligent budget allocation and ROI projection
+ * @param {string} budget - Budget amount (e.g., "50000", "5L", "₹1 Lakh")
+ * @param {string} industry - Industry category
+ * @param {string} platform - Platform name
+ * @param {string} goal - Campaign goal
+ * @param {string} campaignDuration - Duration of campaign
+ * @param {boolean} hasInfluencer - Whether to include influencer budget
+ * @returns {Promise<Object>} - Budget breakdown and ROI projections
+ */
+export async function optimizeBudget(budget, industry, platform, goal, campaignDuration, hasInfluencer = true) {
+  const response = await fetch(`${API_BASE_URL}/api/optimize-budget`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      budget: budget || '50000',
+      industry: industry || 'General',
+      platform: platform || 'Instagram',
+      goal: goal || 'awareness',
+      campaign_duration: campaignDuration || '3 months',
+      has_influencer: hasInfluencer
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.detail || 'Failed to optimize budget');
+  }
+
+  return response.json();
+}
+
 export default {
   generateCampaign,
   predictPerformance,
-  checkHealth
+  checkHealth,
+  getCompetitors,
+  analyzeCompetitor,
+  getIndustryOverview,
+  explainDecision,
+  optimizeBudget
 };
+

@@ -47,7 +47,7 @@ const Home = () => {
                       <span></span>
                       <span></span>
                     </div>
-                    <div className="window-title">BrandPulse Studio</div>
+                    <div className="window-title">StratOS Studio</div>
                   </div>
                   <div className="window-content">
                     <div className="dashboard-mock">
@@ -219,7 +219,7 @@ const Home = () => {
           <div className="integrations-header">
             <h2>Trusted partnerships and integrations<br />across leading platforms</h2>
             <p>
-              BrandPulse builds and maintains strong network partnerships and integrations 
+              StratOS builds and maintains strong network partnerships and integrations 
               to help you unify your customer touch points and keep pace with changes in 
               the digital landscape.
             </p>
@@ -276,7 +276,7 @@ const Home = () => {
         <div className="container">
           <div className="cta-content">
             <h2>Try free for 30 days - no credit card required</h2>
-            <p>Join thousands of marketing teams using BrandPulse to create better campaigns, faster.</p>
+            <p>Join thousands of marketing teams using StratOS to create better campaigns, faster.</p>
             <div className="cta-buttons">
               <Link to="/create-campaign">
                 <Button variant="accent" className="cta-btn-large">

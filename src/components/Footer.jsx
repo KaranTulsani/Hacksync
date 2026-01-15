@@ -1,5 +1,5 @@
 import React from 'react';
-import { Twitter, Linkedin, Github, Globe } from 'lucide-react';
+import { Twitter, Linkedin, Github, Cloud } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -9,8 +9,8 @@ const Footer = () => {
           
           {/* Brand */}
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-text-primary rounded-lg flex items-center justify-center text-white font-bold" style={{ backgroundColor: 'var(--color-text-primary)' }}>B</div>
-            <span className="font-bold text-xl tracking-tight">BrandPulse</span>
+            <Cloud size={24} color="var(--color-text-primary)" fill="var(--color-text-primary)" />
+            <span className="font-bold text-xl tracking-tight">StratOS</span>
           </div>
           
           {/* Links */}
@@ -35,7 +35,7 @@ const Footer = () => {
         </div>
         
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-secondary">
-          © {new Date().getFullYear()} BrandPulse AI. All rights reserved.
+          © {new Date().getFullYear()} StratOS AI. All rights reserved.
         </div>
       </div>
     </footer>

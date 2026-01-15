@@ -28,9 +28,13 @@ import {
   Briefcase,
   Settings,
   Layers,
+  IndianRupee,
   BarChart2
 } from 'lucide-react';
 import Button from '../components/Button';
+import CompetitorInsight from '../components/CompetitorInsight';
+import AskWhy from '../components/AskWhy';
+import BudgetOptimizer from '../components/BudgetOptimizer';
 import { generateCampaign } from '../services/api';
 import './CreateCampaign.css';
 
@@ -58,8 +62,9 @@ const CreateCampaignPage = () => {
   const steps = [
     { id: 1, title: 'Brief', icon: <FileText size={20} /> },
     { id: 2, title: 'Strategy', icon: <BrainCircuit size={20} /> },
-    { id: 3, title: 'Creative', icon: <Sparkles size={20} /> },
-    { id: 4, title: 'Review', icon: <CheckCircle size={20} /> }
+    { id: 3, title: 'Budget', icon: <DollarSign size={20} /> },
+    { id: 4, title: 'Creative', icon: <Sparkles size={20} /> },
+    { id: 5, title: 'Review', icon: <CheckCircle size={20} /> }
   ];
 
   const handleInputChange = (e) => {
@@ -77,12 +82,17 @@ const CreateCampaignPage = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
     try {
+      const budgetValue = campaignData.budget || '₹50,000 - ₹1,00,000';
+      const formattedBudget = (budgetValue.includes('₹') || budgetValue.includes('$')) 
+        ? budgetValue 
+        : `₹${budgetValue}`;
+
       const result = await generateCampaign({
         productName: campaignData.productName,
         targetAudience: campaignData.targetAudience,
         goal: campaignData.goals,
         tone: campaignData.tone,
-        budget: campaignData.budget || '$5,000 - $10,000',
+        budget: formattedBudget,
         campaign_duration: campaignData.timeline || '3 Months',
         platform: campaignData.platform,
         content_type: campaignData.contentType,
@@ -99,15 +109,21 @@ const CreateCampaignPage = () => {
     }
   };
 
-  const generateCreative = () => {
+  const goToBudget = () => {
     setCompletedSteps([1, 2]);
     setCurrentStep(3);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const finalReview = () => {
+  const generateCreative = () => {
     setCompletedSteps([1, 2, 3]);
     setCurrentStep(4);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const finalReview = () => {
+    setCompletedSteps([1, 2, 3, 4]);
+    setCurrentStep(5);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -255,6 +271,7 @@ const CreateCampaignPage = () => {
                           <Briefcase size={20} className="input-icon" />
                           <select name="industry" value={campaignData.industry} onChange={handleInputChange} className="premium-input">
                             <option value="">Select Industry</option>
+                            <option value="Footwear">Footwear</option>
                             <option value="Fitness">Fitness</option>
                             <option value="Fashion">Fashion</option>
                             <option value="Technology">Technology</option>
@@ -308,13 +325,13 @@ const CreateCampaignPage = () => {
                       <div className="input-group">
                         <label className="input-label">Budget Range</label>
                         <div className="input-wrapper">
-                          <DollarSign size={20} className="input-icon" />
+                          <IndianRupee size={20} className="input-icon" />
                           <input 
                             type="text" 
                             name="budget" 
                             value={campaignData.budget} 
                             onChange={handleInputChange} 
-                            placeholder="e.g., $5,000 - $10,000" 
+                            placeholder="e.g., 50,000" 
                             className="premium-input" 
                           />
                         </div>
@@ -375,9 +392,17 @@ const CreateCampaignPage = () => {
                       <h3 className="form-section-title">Core Strategy</h3>
                     </div>
                     
-                    <div className="theme-badge">
+                    <div className="theme-badge" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
                       <Lightbulb size={14} />
                       {aiOutput.strategy?.campaign_theme}
+                      <AskWhy 
+                        elementType="campaign_theme"
+                        elementValue={aiOutput.strategy?.campaign_theme || ''}
+                        product={campaignData.productName}
+                        audience={campaignData.targetAudience}
+                        platform={campaignData.platform}
+                        label="Campaign Theme"
+                      />
                     </div>
                     
                     <div className="emotional-hook">
@@ -401,8 +426,18 @@ const CreateCampaignPage = () => {
                   {/* Side Cards Grid */}
                   <div className="settings-grid">
                     <div className="side-card">
-                      <div className="side-card-header">
-                        <Zap size={18} /> Target Emotion
+                      <div className="side-card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <Zap size={18} /> Target Emotion
+                        </span>
+                        <AskWhy 
+                          elementType="target_emotion"
+                          elementValue={aiOutput.strategy?.target_emotion || ''}
+                          product={campaignData.productName}
+                          audience={campaignData.targetAudience}
+                          platform={campaignData.platform}
+                          label="Target Emotion"
+                        />
                       </div>
                       <div className="side-card-value large">
                         {aiOutput.strategy?.target_emotion}
@@ -419,9 +454,67 @@ const CreateCampaignPage = () => {
                     </div>
                   </div>
 
+                  {/* Competitor Insight Dashboard */}
+                  {aiOutput && (
+                    <div style={{ marginTop: '3rem' }}>
+                      <CompetitorInsight 
+                        industry={campaignData.industry || 'General'} 
+                        userCampaign={{
+                          product: campaignData.productName || '',
+                          audience: campaignData.targetAudience || '',
+                          goal: campaignData.goals || '',
+                          platform: campaignData.platform || 'Instagram',
+                          content_type: campaignData.contentType || 'Reel',
+                          // Flatten nested objects to simple values
+                          strategy: {
+                            target_emotion: aiOutput.strategy?.target_emotion || '',
+                            campaign_theme: aiOutput.strategy?.campaign_theme || ''
+                          },
+                          visual_identity: {
+                            color_palette: aiOutput.visual_identity?.color_palette || []
+                          },
+                          performance_prediction: {
+                            engagement_rate: aiOutput.performance_prediction?.engagement_rate || '3.5%'
+                          }
+                        }}
+                      />
+                    </div>
+                  )}
+
                   <div className="generate-area" style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Button variant="secondary" onClick={() => setCurrentStep(1)}>
                       <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Edit Brief
+                    </Button>
+                    <Button variant="primary" onClick={goToBudget}>
+                      Next: Budget Optimization <ArrowRight size={18} style={{ marginLeft: '0.5rem' }} />
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Budget */}
+              {currentStep === 3 && aiOutput && (
+                <div className="animate-fade-in-up">
+                  <div className="result-section-header">
+                    <h1>Budget & Allocation</h1>
+                    <p>Smart budget distribution to maximize your ROI</p>
+                  </div>
+
+                  {/* Budget Optimizer */}
+                  {campaignData.budget && aiOutput && (
+                    <BudgetOptimizer 
+                      budget={campaignData.budget}
+                      industry={campaignData.industry || 'General'}
+                      platform={campaignData.platform || 'Instagram'}
+                      goal={campaignData.goals || 'awareness'}
+                      campaignDuration={campaignData.campaignDuration || '3 months'}
+                      hasInfluencer={true}
+                    />
+                  )}
+
+                  <div className="generate-area" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Button variant="secondary" onClick={() => setCurrentStep(2)}>
+                      <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Back to Strategy
                     </Button>
                     <Button variant="primary" onClick={generateCreative}>
                       View Creative Assets <Sparkles size={18} style={{ marginLeft: '0.5rem' }} />
@@ -430,8 +523,8 @@ const CreateCampaignPage = () => {
                 </div>
               )}
 
-              {/* Step 3: Creative */}
-              {currentStep === 3 && aiOutput && (
+              {/* Step 4: Creative */}
+              {currentStep === 4 && aiOutput && (
                 <div className="animate-fade-in-up">
                   <div className="result-section-header">
                     <h1>Creative Assets</h1>
@@ -489,8 +582,8 @@ const CreateCampaignPage = () => {
                   </div>
 
                   <div className="generate-area" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Button variant="secondary" onClick={() => setCurrentStep(2)}>
-                      <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Back to Strategy
+                    <Button variant="secondary" onClick={() => setCurrentStep(3)}>
+                      <ArrowLeft size={18} style={{ marginRight: '0.5rem' }} /> Back to Budget
                     </Button>
                     <Button variant="primary" onClick={finalReview}>
                       Review & Export <CheckCircle size={18} style={{ marginLeft: '0.5rem' }} />
@@ -499,8 +592,8 @@ const CreateCampaignPage = () => {
                 </div>
               )}
 
-              {/* Step 4: Review */}
-              {currentStep === 4 && aiOutput && (
+              {/* Step 5: Review */}
+              {currentStep === 5 && aiOutput && (
                 <div className="animate-fade-in-up">
                   <div className="result-section-header">
                     <h1>Campaign Ready!</h1>
@@ -550,7 +643,7 @@ const CreateCampaignPage = () => {
                     <div className="posting-time-section" style={{ 
                       background: 'rgba(255, 255, 255, 0.03)', 
                       borderRadius: '1.5rem', 
-                      padding: '2rem',
+                      padding: '2rem', 
                       border: '1px solid rgba(255, 255, 255, 0.08)',
                       display: 'flex',
                       alignItems: 'center',

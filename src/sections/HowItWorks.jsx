@@ -10,7 +10,7 @@ const steps = [
   },
   {
     title: 'AI Strategy & Reasoning',
-    description: 'BrandPulse analyzes market data and formulates a core campaign strategy and theme.',
+    description: 'StratOS analyzes market data and formulates a core campaign strategy and theme.',
     icon: <BrainCircuit size={32} className="text-accent" />
   },
   {
@@ -30,7 +30,7 @@ const HowItWorks = () => {
     <section id="how-it-works" className="section-padding bg-alt" style={{ backgroundColor: 'var(--color-bg-alt)' }}>
       <div className="container">
         <div className="text-center mb-16">
-          <h2 className="mb-4 text-3xl font-bold">How BrandPulse Works</h2>
+          <h2 className="mb-4 text-3xl font-bold">How StratOS Works</h2>
           <p className="text-secondary max-w-2xl mx-auto text-lg">
             From a simple prompt to a comprehensive campaign in four autonomous steps.
           </p>

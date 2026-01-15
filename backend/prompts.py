@@ -13,6 +13,8 @@ SYSTEM RULES (STRICT):
 - Do NOT mention the word "AI".
 - Do NOT include explanations, notes, or commentary outside JSON.
 - Do NOT include markdown.
+- PLATFORM ADHERENCE: Strictly follow the Platform and Content Type provided in the brief. Do NOT suggest other platforms unless they are highly relevant secondary channels.
+- CURRENCY: Use the currency symbol provided in the budget (e.g., ₹, $, £). If a symbol is provided, use it consistently in all text outputs (strategy summary, etc.).
 - Output ONLY valid JSON.
 
 OUTPUT VALIDATION RULES:

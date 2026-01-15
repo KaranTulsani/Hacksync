@@ -33,6 +33,8 @@ Goal: {user_input['goal']}
 Tone: {user_input['tone']}
 Budget: {user_input['budget']}
 Campaign Duration: {user_input['campaign_duration']}
+Platform: {user_input['platform']}
+Content Type: {user_input['content_type']}
 """
 
 

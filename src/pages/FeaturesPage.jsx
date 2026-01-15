@@ -27,7 +27,7 @@ const FeaturesPage = () => {
           </div>
           <h1>Everything you need to<br />build a world-class brand</h1>
           <p>
-            BrandPulse combines strategic reasoning with creative orchestration 
+            StratOS combines strategic reasoning with creative orchestration 
             to deliver professional-grade campaigns in record time.
           </p>
         </div>
@@ -127,7 +127,7 @@ const FeaturesPage = () => {
       <section className="comparison-section">
         <div className="container">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4">The BrandPulse Advantage</h2>
+            <h2 className="text-3xl font-bold mb-4">The StratOS Advantage</h2>
             <p className="text-lg text-secondary">How we compare to the traditional agency model.</p>
           </div>
 
@@ -155,9 +155,9 @@ const FeaturesPage = () => {
               </div>
             </div>
 
-            {/* BrandPulse */}
+            {/* StratOS */}
             <div className="comp-card premium">
-              <h3 className="comp-title">BrandPulse AI</h3>
+              <h3 className="comp-title">StratOS AI</h3>
               <div className="comp-list">
                 <div className="comp-item positive">
                   <CheckCircle size={20} className="check-icon" />
@@ -186,7 +186,7 @@ const FeaturesPage = () => {
         <div className="container">
           <h2 className="text-4xl font-bold mb-6">Ready to experience the future?</h2>
           <p className="text-xl text-secondary mb-10 max-w-2xl mx-auto cta-text">
-            Join the forward-thinking brands using BrandPulse to dominate their market.
+            Join the forward-thinking brands using StratOS to dominate their market.
           </p>
           <div className="cta-button-group">
             <Button variant="primary" onClick={() => window.location.href='/create-campaign'}>

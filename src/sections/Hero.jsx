@@ -27,7 +27,7 @@ const Hero = () => {
         </h1>
         
         <p className="mb-10 text-xl text-secondary max-w-2xl mx-auto leading-relaxed" style={{ color: 'var(--color-text-secondary)' }}>
-          BrandPulse ingests your high-level brief and autonomously reasons through strategy, research, and creative generation to produce a deployment-ready campaign package.
+          StratOS ingests your high-level brief and autonomously reasons through strategy, research, and creative generation to produce a deployment-ready campaign package.
         </p>
         
         <div className="flex flex-col sm:flex-row justify-center gap-md mb-20">
@@ -54,7 +54,7 @@ const Hero = () => {
                 <div className="w-3 h-3 rounded-full bg-yellow-400" style={{ backgroundColor: '#facc15' }}></div>
                 <div className="w-3 h-3 rounded-full bg-green-400" style={{ backgroundColor: '#4ade80' }}></div>
               </div>
-              <div className="flex-1 text-center text-xs font-medium text-gray-400">BrandPulse Studio</div>
+              <div className="flex-1 text-center text-xs font-medium text-gray-400">StratOS Studio</div>
             </div>
 
             {/* Mock UI Content */}
